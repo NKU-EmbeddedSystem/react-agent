@@ -1,0 +1,320 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "printed",
+    "results",
+    "reasoning",
+    "rows",
+    "issues"
+  ],
+  "properties": {
+    "printed": {
+      "type": "string",
+      "description": "Everything printed for this entry, transcribed in reading order: labels, variable assignments ('R = Me'), each result with the protocol label and footnote markers printed with it, conditions printed with it"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Each result printed for this entry, verbatim with what identifies it: '[in situ] [Fe] 71%', '78% b', 'n.d.', '3:1 d.r.'. Empty when the entry prints none"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "How many reactions (experiments) this entry reports and why: which results come from the same reactants under the same conditions (one reaction, several measurements) and which differ in a reactant, a condition or the protocol"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "results",
+          "variant",
+          "footnote_markers",
+          "variables",
+          "drawn_structures",
+          "overrides"
+        ],
+        "properties": {
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Label of the compound or entry this reaction is reported under"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Numbers of this reaction's results in `results` (1 = first)"
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Key of the template variant (protocol) this reaction was run under; null when it comes under no protocol label"
+          },
+          "footnote_markers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Markers printed on this reaction's label or results"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "value"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Variable groups printed as text for this reaction ('R = Me', 'X = Cl')"
+          },
+          "drawn_structures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "key",
+                "label",
+                "text"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "description": "Catalysts, ligands, additives drawn only inside this entry that an override refers to; their boxes are taken later. Usually empty"
+          },
+          "overrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/override"
+            },
+            "description": "How this reaction differs from the template and its variant, as printed in this entry: row cells, a condition printed with it, the alternative it uses, the value of each per-entry condition"
+          }
+        }
+      },
+      "description": "One row per reaction reported in this entry"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Doubts a reviewer should look at"
+    }
+  },
+  "$defs": {
+    "override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "action",
+        "role",
+        "text",
+        "amount",
+        "structure_key",
+        "step",
+        "alternatives",
+        "basis",
+        "stated_at",
+        "inferred"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Key of the template participant/condition to change, or a new key for action=add"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "replace",
+            "remove",
+            "add",
+            "use"
+          ],
+          "description": "use: of the alternatives of an `alternative_groups` entry, this one applies (the others of its group drop out)"
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "catalyst",
+            "ligand",
+            "reagent",
+            "additive",
+            "base",
+            "solvent",
+            "temperature",
+            "time",
+            "atmosphere",
+            "other",
+            "reactant",
+            "intermediate",
+            "product",
+            "byproduct",
+            null
+          ],
+          "description": "New role. Required for action=add (a condition role). For replace, set it only to change a participant's role (e.g. to intermediate); else null"
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "structure_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+        },
+        "step": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of the step (template.steps) this condition belongs to; null for a single-step reaction"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "structure_key"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "structure_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+              }
+            }
+          },
+          "description": "The options when the source says 'A or B' without saying which one was used here (at least two); empty when the item is definite"
+        },
+        "basis": {
+          "type": "string",
+          "description": "Where this change is stated, e.g. 'footnote b', 'row cell: additive'; for an inferred change, the reasoning"
+        },
+        "stated_at": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "doc",
+            "page"
+          ],
+          "properties": {
+            "doc": {
+              "type": "string",
+              "enum": [
+                "main",
+                "si"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            }
+          },
+          "description": "Where the paper states this when the block itself (its scheme, table, caption, footnotes) does not print it: document and page of the passage. Null when the block prints it, and for an inferred item"
+        },
+        "inferred": {
+          "type": "boolean",
+          "description": "False for a change the paper states. True when it is your own conclusion (by analogy with another protocol, from chemical knowledge); `basis` then gives the reasoning"
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "text",
+        "page",
+        "bbox"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Printed label of the drawn compound (C1, L3) or a short slug"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed name, if any"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "bbox": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "[x0, y0, x1, y1] in PDF points"
+        }
+      }
+    }
+  }
+}

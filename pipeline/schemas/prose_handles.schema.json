@@ -1,0 +1,116 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reactions",
+    "notes",
+    "issues"
+  ],
+  "properties": {
+    "reactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "results",
+          "variant",
+          "footnote_markers",
+          "distinguishing",
+          "variables"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "description": "Number of the experiment in `experiments` (1 = first)"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Numbers of this reaction's results in the experiment's `results` (1 = first); empty when it states none"
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Key of the experiment's variant (run) this reaction is; null when it has none"
+          },
+          "footnote_markers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Markers of the experiment that apply to this reaction"
+          },
+          "distinguishing": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Only when the experiment reports more than one reaction: what sets this one apart, as the passage says it; else null"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "value",
+                "participant_keys"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "participant_keys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The participants of the experiment that carry the symbol"
+                }
+              }
+            },
+            "description": "Values of variable groups printed for this reaction ('X = Cl'); empty as a rule"
+          }
+        }
+      },
+      "description": "Every reaction of the passage in experiment order: one per experiment, or one per run of an experiment that has variants"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "text"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Why an experiment was split, or what is unusual about it; nothing for plain experiments"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Doubts a reviewer should look at"
+    }
+  }
+}

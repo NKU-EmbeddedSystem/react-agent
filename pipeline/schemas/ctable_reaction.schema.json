@@ -1,0 +1,409 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "template_check",
+    "overrides",
+    "outcomes",
+    "lookup",
+    "related",
+    "notes",
+    "issues"
+  ],
+  "properties": {
+    "template_check": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target",
+          "stage1",
+          "seen",
+          "evidence"
+        ],
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "What you checked: a template participant, condition or structure key, a column key, a footnote marker, or 'steps' / 'scheme' / 'default_yield_type'"
+          },
+          "stage1": {
+            "type": "string",
+            "description": "What the table reading says"
+          },
+          "seen": {
+            "type": "string",
+            "description": "What the page or the text shows instead"
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Where: the printed cell, header or footnote, or a passage (doc and page)"
+          }
+        }
+      },
+      "description": "Where the table reading (template, columns) is wrong for this reaction; empty when it is right"
+    },
+    "overrides": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/override"
+      },
+      "description": "How this reaction differs from the template as its row prints it: each condition cell (replace with the printed value, or remove when the cell is empty), each change a deviation names, a participant the row replaces"
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "product_key",
+          "yield_text",
+          "yield_value",
+          "yield_qualifier",
+          "yield_type",
+          "selectivity",
+          "footnote_markers",
+          "notes",
+          "column",
+          "measure"
+        ],
+        "properties": {
+          "product_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "yield_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "yield_value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "yield_qualifier": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "<",
+              ">",
+              "~",
+              "trace",
+              "ND",
+              "NR",
+              "other",
+              null
+            ]
+          },
+          "yield_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "isolated",
+              "NMR",
+              "GC",
+              "HPLC",
+              "LC",
+              "analytical",
+              "conversion",
+              "other",
+              null
+            ]
+          },
+          "selectivity": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "text"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "dr",
+                    "er",
+                    "ee",
+                    "rr",
+                    "E/Z",
+                    "other"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "footnote_markers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "column": {
+            "type": "string",
+            "description": "Key of the outcome column the value is printed in"
+          },
+          "measure": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Which of the column's `measures` the value is (1 = first); required when the column has more than one, else null"
+          }
+        }
+      },
+      "description": "One per measured value in this reaction's result cells"
+    },
+    "lookup": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/override"
+      },
+      "description": "What the main text or the SI states about this entry that the table leaves open; each has stated_at or is inferred"
+    },
+    "related": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "doc",
+          "page",
+          "text",
+          "about"
+        ],
+        "properties": {
+          "doc": {
+            "type": "string",
+            "enum": [
+              "main",
+              "si"
+            ]
+          },
+          "page": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string",
+            "description": "The passage, quoted (shortened with … where long)"
+          },
+          "about": {
+            "type": "string",
+            "description": "What it says about the block or reaction, and what you took from it"
+          }
+        }
+      },
+      "description": "What the main text and the SI say about this entry; empty when nothing was found"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Doubts a reviewer should look at"
+    }
+  },
+  "$defs": {
+    "override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "action",
+        "role",
+        "text",
+        "amount",
+        "structure_key",
+        "step",
+        "alternatives",
+        "basis",
+        "stated_at",
+        "inferred"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Key of the template participant/condition to change, or a new key for action=add"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "replace",
+            "remove",
+            "add",
+            "use"
+          ],
+          "description": "use: of the alternatives of an `alternative_groups` entry, this one applies (the others of its group drop out)"
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "catalyst",
+            "ligand",
+            "reagent",
+            "additive",
+            "base",
+            "solvent",
+            "temperature",
+            "time",
+            "atmosphere",
+            "other",
+            "reactant",
+            "intermediate",
+            "product",
+            "byproduct",
+            null
+          ],
+          "description": "New role. Required for action=add (a condition role). For replace, set it only to change a participant's role (e.g. to intermediate); else null"
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "structure_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+        },
+        "step": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of the step (template.steps) this condition belongs to; null for a single-step reaction"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "structure_key"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "structure_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+              }
+            }
+          },
+          "description": "The options when the source says 'A or B' without saying which one was used here (at least two); empty when the item is definite"
+        },
+        "basis": {
+          "type": "string",
+          "description": "Where this change is stated, e.g. 'footnote b', 'row cell: additive'; for an inferred change, the reasoning"
+        },
+        "stated_at": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "doc",
+            "page"
+          ],
+          "properties": {
+            "doc": {
+              "type": "string",
+              "enum": [
+                "main",
+                "si"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            }
+          },
+          "description": "Where the paper states this when the block itself (its scheme, table, caption, footnotes) does not print it: document and page of the passage. Null when the block prints it, and for an inferred item"
+        },
+        "inferred": {
+          "type": "boolean",
+          "description": "False for a change the paper states. True when it is your own conclusion (by analogy with another protocol, from chemical knowledge); `basis` then gives the reasoning"
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "text",
+        "page",
+        "bbox"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Printed label of the drawn compound (C1, L3) or a short slug"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed name, if any"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "bbox": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "[x0, y0, x1, y1] in PDF points"
+        }
+      }
+    }
+  }
+}

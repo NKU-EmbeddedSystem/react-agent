@@ -1,0 +1,26 @@
+{
+  "skill_name": "review-reaction-evidence",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "核查一个使用 R/X 通式但条目已经记录 R=H、X=Br 的反应，不查找完整结构。",
+      "expected_output": "保持原图与赋值，无变量缺失问题、无结构替换。",
+      "files": [],
+      "assertions": ["原始变量保留", "不提出结构展开"]
+    },
+    {
+      "id": 2,
+      "prompt": "当前条目只写 L6，提供的同篇 SI 页面有 L6 定义。将定义及 doc/page/bbox 证据带入该条目。",
+      "expected_output": "独立可读的定义和可定位证据，不仅指向另一反应条目。",
+      "files": [],
+      "assertions": ["定义带回当前条目", "证据指向正确文档"]
+    },
+    {
+      "id": 3,
+      "prompt": "条目 yield.text 为 0.35，但谱图和备注明确说是 NMR 积分；没有明确产率。保留积分，不计算。",
+      "expected_output": "测量原值 0.35 保留，有效产率未知，添加未明确产率标签。",
+      "files": [],
+      "assertions": ["积分不显示为产率", "不将积分乘以 100", "原始值可追溯"]
+    }
+  ]
+}

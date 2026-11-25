@@ -1,0 +1,116 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reactions",
+    "notes",
+    "issues"
+  ],
+  "properties": {
+    "reactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "results",
+          "variant",
+          "footnote_markers",
+          "distinguishing",
+          "variables"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "description": "Number of the equation in `equations` (1 = first) the reaction is printed in"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Numbers of this reaction's results in the equation's `results` (1 = first); empty when the equation prints none"
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Key of the equation's variant this reaction runs; null when it has none"
+          },
+          "footnote_markers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Markers of the equation that apply to this reaction"
+          },
+          "distinguishing": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Only when the equation reports more than one reaction: what sets this one apart, as printed; else null"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "value",
+                "participant_keys"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "participant_keys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The participants of the equation whose drawing carries the symbol"
+                }
+              }
+            },
+            "description": "Values of variable groups printed for this reaction ('X = Cl'); empty as a rule"
+          }
+        }
+      },
+      "description": "Every reaction of the block in equation order: one per equation, unless an equation reports several experiments"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "text"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Why an equation was split, or what is unusual about it; nothing for plain equations"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Doubts a reviewer should look at"
+    }
+  }
+}

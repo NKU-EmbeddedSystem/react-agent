@@ -1,0 +1,163 @@
+/* The PDF pane (components/pdfpane.js): a toolbar over pdf.js's own viewer. pdf_viewer.css styles
+   the pages and their layers; this file sets the frame around them, the boxes drawn on the pages
+   and the drawing mode. */
+
+.pdfp {
+  position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--pdf-bg);
+  container-type: inline-size;
+  /* Pages without pdf.js's 9px transparent frame: a thin shadow instead, 12px apart. */
+  --page-margin: 0 auto 12px;
+  --page-border: 0 solid transparent;
+}
+
+/* ---------------------------------------------------------------- toolbar */
+.pdfp-head, .pdfp-tools {
+  flex: none; display: flex; align-items: center; min-width: 0; background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.pdfp-head { gap: 10px; height: 40px; padding: 0 6px 0 12px; }
+.pdfp-tools { gap: 4px; height: 36px; padding: 0 8px 0 6px; background: #fafbfc; }
+
+.pdfp-title { font-size: 13px; font-weight: 600; }
+.pdfp-docs { flex: none; }
+.pdfp-docs .btn { min-width: 48px; gap: 5px; }
+.pdfp-mark { width: 6px; height: 6px; border-radius: 50%; background: var(--box-focus); flex: none; }
+.pdfp-file {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 12px; color: var(--ink-3);
+}
+
+.pdfp .btn.icon { width: 26px; height: 26px; padding: 0; flex: none; color: var(--ink-2); }
+.pdfp .btn.icon:hover:not(:disabled) { color: var(--ink); }
+.pdfp .btn.icon:disabled { background: none; }
+.pdfp-group { display: flex; align-items: center; gap: 2px; }
+.pdfp-zoom { margin-left: auto; }
+.pdfp-page {
+  width: 46px; height: 24px; padding: 0 4px; text-align: center; font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.pdfp-count {
+  min-width: 34px; padding: 0 4px 0 3px; font-size: 12px; color: var(--ink-3); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.pdfp-scale { width: 68px; height: 24px; font-size: 12px; padding: 0 2px 0 7px; font-variant-numeric: tabular-nums; }
+.pdfp-fit { gap: 5px; height: 26px; padding: 0 8px 0 6px; margin-left: 4px; color: var(--ink-2); }
+.pdfp-fit.on { color: var(--accent); background: var(--accent-bg); }
+.pdfp-fit.on:hover { background: #dde8fb; }
+.pdfp-fit:disabled { background: none; }
+.pdfp-target { color: var(--box-focus) !important; margin-left: 4px; }
+/* A narrow pane keeps the icon of 适合宽度 and drops its words. */
+@container (max-width: 430px) {
+  .pdfp-fit span { display: none; }
+  .pdfp-fit { width: 26px; padding: 0; justify-content: center; }
+}
+
+/* The hint while a box is being drawn. */
+.pdfp-drawbar {
+  flex: none; display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 5px 8px 5px 12px;
+  background: var(--accent-bg); color: var(--accent); border-bottom: 1px solid #c9d8f3; font-size: 12.5px;
+}
+.pdfp-drawbar svg { flex: none; }
+.pdfp-drawbar-text { flex: 1; min-width: 0; color: var(--ink); }
+.pdfp-drawbar-text b { color: var(--accent); font-weight: 600; }
+.pdfp-drawbar kbd { margin: 0 1px; }
+
+/* ---------------------------------------------------------------- the pages */
+.pdfp-stage { position: relative; flex: 1; min-height: 0; }
+.pdfp-host { position: absolute; inset: 0; }
+.pdfp-scroll {
+  position: absolute; inset: 0; overflow: auto; outline: none;
+  scrollbar-width: thin; scrollbar-color: #b9c0c9 transparent;
+}
+.pdfp .pdfViewer { padding: 12px 0 2px; }
+.pdfp .pdfViewer .page {
+  box-shadow: 0 0 0 1px rgba(20, 24, 30, .07), 0 1px 3px rgba(20, 24, 30, .08), 0 4px 14px rgba(20, 24, 30, .06);
+}
+/* base.css (the viewer's) gives a generic .page padding and caps its children at 1180px; pdf.js's
+   page divs carry the same class, so above ~1180px of page width the text layer and the boxes were
+   squeezed off the canvas. Undone here. */
+.pdfp .pdfViewer .page { padding: 0; flex: none; }
+.pdfp .pdfViewer .page > * { max-width: none; margin-left: 0; margin-right: 0; }
+
+/* Boxes on a page: placed in % of the page, above the text layer, never in the way of selecting text. */
+.pdfp-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.pdfp-box { position: absolute; border-radius: 1.5px; }
+.pdfp-box.faint { box-shadow: 0 0 0 1.5px rgba(37, 99, 201, .5); background: rgba(37, 99, 201, .035); }
+.pdfp-box.faint.k-entry { box-shadow: 0 0 0 1.5px rgba(31, 157, 85, .55); background: rgba(31, 157, 85, .035); }
+.pdfp-box.faint:is(.k-structure, .k-condition) { box-shadow: 0 0 0 1.5px rgba(217, 115, 13, .55); background: rgba(217, 115, 13, .035); }
+.pdfp-box.target { box-shadow: 0 0 0 2px var(--box-focus); background: rgba(225, 29, 72, .06); z-index: 1; }
+.pdfp-box.target.pulse { animation: pdfp-pulse 900ms ease-out 3 both; }
+@keyframes pdfp-pulse {
+  from { box-shadow: 0 0 0 2px var(--box-focus), 0 0 0 2px rgba(225, 29, 72, .5); background: rgba(225, 29, 72, .2); }
+  to { box-shadow: 0 0 0 2px var(--box-focus), 0 0 0 16px rgba(225, 29, 72, 0); background: rgba(225, 29, 72, .06); }
+}
+/* Labels sit just above their box: small haloed text for the reaction's boxes, a solid tag for the
+   target that leaves with its pulse. */
+.pdfp-tag {
+  position: absolute; left: -1px; bottom: calc(100% + 1px); white-space: nowrap;
+  font: 600 10px/12px var(--mono); color: var(--box-participant);
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #fff;
+}
+.k-entry > .pdfp-tag { color: var(--box-entry); }
+:is(.k-structure, .k-condition) > .pdfp-tag { color: var(--box-structure); }
+.target > .pdfp-tag {
+  left: -2px; bottom: calc(100% + 3px); padding: 0 5px; border-radius: 3px; font-size: 11px; line-height: 16px;
+  color: #fff; background: var(--box-focus); text-shadow: none; animation: pdfp-tag-out .4s ease both;
+}
+@keyframes pdfp-tag-out { to { opacity: 0; visibility: hidden; } }
+
+/* Drawing a box: a crosshair over the pages, text and links out of the way. */
+.pdfp-scroll.pdfp-drawing { user-select: none; -webkit-user-select: none; }
+.pdfp-scroll.pdfp-drawing .page { cursor: crosshair; }
+.pdfp-scroll.pdfp-drawing .page:hover { box-shadow: 0 0 0 2px var(--accent), 0 4px 14px rgba(20, 24, 30, .08); }
+.pdfp-scroll.pdfp-drawing :is(.textLayer, .annotationLayer, .textLayer *, .annotationLayer *) { pointer-events: none !important; }
+.pdfp-band {
+  position: absolute; border: 1.5px dashed var(--accent); background: rgba(37, 99, 201, .1); border-radius: 1px;
+}
+
+/* ---------------------------------------------------------------- states */
+.pdfp-progress {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 4; overflow: hidden; pointer-events: none;
+}
+.pdfp-progress::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 35%; background: var(--accent); border-radius: 2px;
+  animation: pdfp-slide 1.1s ease-in-out infinite;
+}
+@keyframes pdfp-slide { from { left: -35%; } to { left: 100%; } }
+
+.pdfp-status {
+  position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px; background: var(--pdf-bg); overflow: auto;
+}
+.pdfp-status.top { align-items: flex-start; }
+.pdfp-card {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 420px;
+  padding: 14px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  font-size: 13px; color: var(--ink-2); box-shadow: 0 1px 3px rgba(20, 24, 30, .06);
+}
+.pdfp-card.bad { flex-direction: column; text-align: center; gap: 6px; }
+.pdfp-card.bad b { color: var(--bad); font-weight: 600; }
+.pdfp-card.bad span { overflow-wrap: anywhere; font-size: 12.5px; }
+.pdfp-card.bad .btn { margin-top: 4px; }
+.pdfp-spinner {
+  width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-strong); border-top-color: var(--accent);
+  animation: pdfp-spin .8s linear infinite;
+}
+@keyframes pdfp-spin { to { transform: rotate(360deg); } }
+
+.pdfp-empty {
+  width: 100%; max-width: 460px; padding: 18px 18px 14px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); font-size: 12.5px; color: var(--ink-2);
+}
+.pdfp-empty-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.pdfp-papers { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.pdfp-papers li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.pdfp-papers li:last-child { border-bottom: none; }
+.pdfp-paper { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.pdfp-paper b { display: inline-block; min-width: 18px; margin-right: 6px; font-variant-numeric: tabular-nums; color: var(--ink-3); font-weight: 600; }
+.pdfp-paper-docs { flex: none; display: flex; gap: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pdfp-box.target.pulse, .pdfp-progress::after, .pdfp-spinner { animation: none; }
+  .target > .pdfp-tag { animation-duration: 1ms; }
+}

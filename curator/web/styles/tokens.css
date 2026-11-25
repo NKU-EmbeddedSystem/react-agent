@@ -1,0 +1,38 @@
+/* One set of values for every page. Colour is kept for what needs attention:
+   inferred (violet), unresolved or failed (red), unfinished (amber), done (green). */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --sunken: #f1f3f5;
+  --line: #e3e6ea;
+  --line-strong: #cdd2d9;
+  --ink: #1c2127;
+  --ink-2: #5a636e;
+  --ink-3: #8c95a0;
+
+  --accent: #2563c9;
+  --accent-bg: #e9f0fc;
+  --ok: #1f7a3d;
+  --ok-bg: #e4f3e8;
+  --warn: #8f5f00;
+  --warn-bg: #fdf1d3;
+  --bad: #c0362c;
+  --bad-bg: #fcebe9;
+  --infer: #6b3fc4;
+  --infer-bg: #f0eafb;
+
+  /* Boxes on page figures. */
+  --box-entry: #1f9d55;
+  --box-participant: #2563c9;
+  --box-structure: #d9730d;
+  --box-scheme: #9333ea;
+  --box-ignored: #8c95a0;
+  --box-focus: #e11d48;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --topbar: 48px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC",
+    "Microsoft YaHei", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}

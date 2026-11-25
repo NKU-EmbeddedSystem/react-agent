@@ -1,0 +1,23 @@
+# 原始文献数据
+Data/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Pipeline outputs
+work/
+reviewed/
+work-main/
+work-si/
+
+# Demo data (python -m demo.make)
+demo-data/
+
+# Backups of earlier work/ runs
+.bak/
+
+# The curator database (python -m curator import)
+db/
+

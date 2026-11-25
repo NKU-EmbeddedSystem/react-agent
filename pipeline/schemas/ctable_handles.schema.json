@@ -1,0 +1,105 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reactions",
+    "notes",
+    "issues"
+  ],
+  "properties": {
+    "reactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "results",
+          "variant",
+          "footnote_markers",
+          "distinguishing"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "description": "Number of the row in `entries` (1 = first) the reaction is printed in"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "column",
+                "part"
+              ],
+              "properties": {
+                "column": {
+                  "type": "string",
+                  "description": "Key of an outcome column"
+                },
+                "part": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "null when the whole cell belongs to this reaction; else the part of the cell text that does, copied exactly"
+                }
+              }
+            },
+            "description": "The result cells of this reaction"
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Key of the template variant whose label is printed for this reaction; null without a label"
+          },
+          "footnote_markers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Markers printed in the row (on the entry number or in a cell) that apply to this reaction; never those of the title or of a column header"
+          },
+          "distinguishing": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Only when the row reports more than one reaction: what sets this one apart, as printed ('COMU', '60 °C'); else null"
+          }
+        }
+      },
+      "description": "Every reaction of the table in row order: one per row, unless a row reports several experiments"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "text"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Why a row was split, or what is unusual about it; nothing for plain rows"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Doubts a reviewer should look at"
+    }
+  }
+}

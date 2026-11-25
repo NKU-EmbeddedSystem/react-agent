@@ -1,0 +1,900 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "template",
+    "entries",
+    "ignored",
+    "notes"
+  ],
+  "properties": {
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "general_reaction",
+        "reading_guide",
+        "scheme",
+        "participants",
+        "alternative_groups",
+        "steps",
+        "conditions",
+        "structures",
+        "footnotes",
+        "preparations",
+        "variable_defaults",
+        "default_yield_type",
+        "variants",
+        "context"
+      ],
+      "properties": {
+        "general_reaction": {
+          "type": "string",
+          "description": "One sentence describing the reaction shared by the block"
+        },
+        "reading_guide": {
+          "type": "string",
+          "description": "Guidance written for the agents that will each extract one entry of this block: how an entry is laid out, what every printed element means (label, each number, colours, brackets, superscripts), what is drawn per entry and what follows from the scheme, and the pitfalls of this particular figure"
+        },
+        "scheme": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "page",
+            "bbox"
+          ],
+          "properties": {
+            "page": {
+              "type": "integer"
+            },
+            "bbox": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "description": "[x0, y0, x1, y1] in PDF points"
+            }
+          },
+          "description": "Area of the general scheme / header (structures, arrows, text over the arrows); null if none"
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "role",
+              "label",
+              "text",
+              "amount",
+              "generic",
+              "isolated",
+              "page",
+              "bbox",
+              "alternatives",
+              "stated_at"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "reactant",
+                  "intermediate",
+                  "product",
+                  "byproduct"
+                ]
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "text": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "amount": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "generic": {
+                "type": "boolean",
+                "description": "True if the drawing has variable groups (R, X, Ar, dashed rings) or stands for a compound class"
+              },
+              "isolated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "For an intermediate: whether it was isolated before the next step; null otherwise"
+              },
+              "page": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "bbox": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "number"
+                },
+                "description": "[x0, y0, x1, y1] in PDF points, or null"
+              },
+              "alternatives": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "text",
+                    "structure_key"
+                  ],
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "structure_key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+                    }
+                  }
+                },
+                "description": "The options when the source says 'A or B' without saying which one was used here (at least two); empty when the item is definite"
+              },
+              "stated_at": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": false,
+                "required": [
+                  "doc",
+                  "page"
+                ],
+                "properties": {
+                  "doc": {
+                    "type": "string",
+                    "enum": [
+                      "main",
+                      "si"
+                    ]
+                  },
+                  "page": {
+                    "type": "integer"
+                  }
+                },
+                "description": "Where the paper states this when the block itself (its scheme, table, caption, footnotes) does not print it: document and page of the passage. Null when the block prints it, and for an inferred item"
+              }
+            }
+          }
+        },
+        "alternative_groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "keys",
+              "default",
+              "basis",
+              "stated_at",
+              "inferred"
+            ],
+            "properties": {
+              "keys": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Keys of the participants the source offers for one position ('A or B'), at least two"
+              },
+              "default": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The one that applies to a result reported without a variant; null when every result comes under a variant that chooses"
+              },
+              "basis": {
+                "type": "string",
+                "description": "What decides the default: where the paper says it, or your reasoning"
+              },
+              "stated_at": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": false,
+                "required": [
+                  "doc",
+                  "page"
+                ],
+                "properties": {
+                  "doc": {
+                    "type": "string",
+                    "enum": [
+                      "main",
+                      "si"
+                    ]
+                  },
+                  "page": {
+                    "type": "integer"
+                  }
+                },
+                "description": "Where the paper states this when the block itself (its scheme, table, caption, footnotes) does not print it: document and page of the passage. Null when the block prints it, and for an inferred item"
+              },
+              "inferred": {
+                "type": "boolean",
+                "description": "True when the paper does not say which one applies and the default is your conclusion"
+              }
+            }
+          },
+          "description": "Positions of the reaction for which the source draws or names alternatives. Every record ends up with exactly one participant of each group"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "n",
+              "description",
+              "reactants",
+              "products"
+            ],
+            "properties": {
+              "n": {
+                "type": "integer",
+                "description": "1, 2, ... in reaction order"
+              },
+              "description": {
+                "type": "string",
+                "description": "What happens in this step, e.g. 'activation of the acid to the redox-active ester'"
+              },
+              "reactants": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Keys of the participants that react in this step"
+              },
+              "products": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Keys of the participants formed in this step"
+              }
+            }
+          },
+          "description": "The reaction as steps: one for a single-step reaction, several for a sequence. An intermediate is a product of one step and a reactant of a later one"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "role",
+              "text",
+              "amount",
+              "structure_key",
+              "step",
+              "alternatives",
+              "stated_at",
+              "per_entry"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "catalyst",
+                  "ligand",
+                  "reagent",
+                  "additive",
+                  "base",
+                  "solvent",
+                  "temperature",
+                  "time",
+                  "atmosphere",
+                  "other"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "amount": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "structure_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+              },
+              "step": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of the step (template.steps) this condition belongs to; null for a single-step reaction"
+              },
+              "alternatives": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "text",
+                    "structure_key"
+                  ],
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "structure_key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+                    }
+                  }
+                },
+                "description": "The options when the source says 'A or B' without saying which one was used here (at least two); empty when the item is definite"
+              },
+              "stated_at": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": false,
+                "required": [
+                  "doc",
+                  "page"
+                ],
+                "properties": {
+                  "doc": {
+                    "type": "string",
+                    "enum": [
+                      "main",
+                      "si"
+                    ]
+                  },
+                  "page": {
+                    "type": "integer"
+                  }
+                },
+                "description": "Where the paper states this when the block itself (its scheme, table, caption, footnotes) does not print it: document and page of the passage. Null when the block prints it, and for an inferred item"
+              },
+              "per_entry": {
+                "type": "boolean",
+                "description": "True when the block gives this condition entry by entry (a column of an optimization table): `text` is the header or placeholder as printed ('cat.', 'additive') and every entry states its own value"
+              }
+            }
+          },
+          "description": "The base conditions: what the scheme and the conditions footnote state for every entry"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/structure"
+          },
+          "description": "Drawn compounds that are not participants: catalysts, ligands, additives, reagents (e.g. a legend of catalysts C1-C6 under a table)"
+        },
+        "footnotes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "marker",
+              "text",
+              "overrides",
+              "notes"
+            ],
+            "properties": {
+              "marker": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string",
+                "description": "Verbatim footnote text for this marker"
+              },
+              "overrides": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/override"
+                }
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "preparations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "participant_key",
+              "description",
+              "from_participants",
+              "items",
+              "basis"
+            ],
+            "properties": {
+              "participant_key": {
+                "type": "string",
+                "description": "The starting material (a template participant) that was made beforehand"
+              },
+              "description": {
+                "type": "string",
+                "description": "What the block shows about how it was made, e.g. 'esterification of the acid'"
+              },
+              "from_participants": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Keys of the template participants it was made from; may be empty"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "role",
+                    "text",
+                    "amount",
+                    "structure_key"
+                  ],
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "reactant",
+                        "catalyst",
+                        "ligand",
+                        "reagent",
+                        "additive",
+                        "base",
+                        "solvent",
+                        "temperature",
+                        "time",
+                        "atmosphere",
+                        "other"
+                      ]
+                    },
+                    "text": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Printed name; null for a compound that is only drawn"
+                    },
+                    "amount": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "structure_key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+                    }
+                  }
+                },
+                "description": "The other compounds and conditions of that preparation, as printed or drawn"
+              },
+              "basis": {
+                "type": "string",
+                "description": "Where the block shows it, e.g. 'first arrow of the general scheme'"
+              }
+            }
+          },
+          "description": "How a starting material was made, when the block shows it but the reported results do not include that step (an activated ester isolated before the reaction the yields refer to). Usually empty"
+        },
+        "variable_defaults": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "value",
+              "participant_key",
+              "basis"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "participant_key": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "basis": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "default_yield_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "isolated",
+            "NMR",
+            "GC",
+            "HPLC",
+            "LC",
+            "analytical",
+            "conversion",
+            "other",
+            null
+          ],
+          "description": "Only when the document states it; else null"
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "title",
+              "conditions_given",
+              "overrides",
+              "notes"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "conditions_given": {
+                "type": "boolean",
+                "description": "False when the paper (main text and SI) does not give the conditions of this protocol. Nothing of the base conditions or amounts then carries over"
+              },
+              "overrides": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/override"
+                }
+              },
+              "notes": {
+                "type": "string",
+                "description": "E.g. where the paper points to for the conditions of this protocol"
+              }
+            }
+          }
+        },
+        "context": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "doc",
+              "page",
+              "text",
+              "about"
+            ],
+            "properties": {
+              "doc": {
+                "type": "string",
+                "enum": [
+                  "main",
+                  "si"
+                ]
+              },
+              "page": {
+                "type": "integer"
+              },
+              "text": {
+                "type": "string",
+                "description": "The passage, quoted (shortened with … where long)"
+              },
+              "about": {
+                "type": "string",
+                "description": "What it says about the block or reaction, and what you took from it"
+              }
+            }
+          },
+          "description": "The passages outside the block that you relied on to understand it: where the main text discusses it, and the parts of the SI that define what it leaves open (general procedures, the fuller table)"
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "page",
+          "bbox",
+          "descriptor"
+        ],
+        "properties": {
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Label printed for the entry (compound label, entry number); null if none"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "[x0, y0, x1, y1] in PDF points"
+          },
+          "descriptor": {
+            "type": "string",
+            "description": "What is printed for the entry, in short, e.g. '3; [isolated] [Fe] 81% c; [in situ] [Fe] 71%; [Ni] 85%'"
+          }
+        }
+      },
+      "description": "Every entry of the block in reading order: what is printed as one unit (a drawing with its label and results, a table row, a paragraph). An entry may report several reactions; they are told apart later, one entry at a time"
+    },
+    "ignored": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "bbox",
+          "reason"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "[x0, y0, x1, y1] in PDF points"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "action",
+        "role",
+        "text",
+        "amount",
+        "structure_key",
+        "step",
+        "alternatives",
+        "basis",
+        "stated_at",
+        "inferred"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Key of the template participant/condition to change, or a new key for action=add"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "replace",
+            "remove",
+            "add",
+            "use"
+          ],
+          "description": "use: of the alternatives of an `alternative_groups` entry, this one applies (the others of its group drop out)"
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "catalyst",
+            "ligand",
+            "reagent",
+            "additive",
+            "base",
+            "solvent",
+            "temperature",
+            "time",
+            "atmosphere",
+            "other",
+            "reactant",
+            "intermediate",
+            "product",
+            "byproduct",
+            null
+          ],
+          "description": "New role. Required for action=add (a condition role). For replace, set it only to change a participant's role (e.g. to intermediate); else null"
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "structure_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+        },
+        "step": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of the step (template.steps) this condition belongs to; null for a single-step reaction"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "structure_key"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "structure_key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Key of the drawn structure (`structures`) this refers to; null if it is not drawn"
+              }
+            }
+          },
+          "description": "The options when the source says 'A or B' without saying which one was used here (at least two); empty when the item is definite"
+        },
+        "basis": {
+          "type": "string",
+          "description": "Where this change is stated, e.g. 'footnote b', 'row cell: additive'; for an inferred change, the reasoning"
+        },
+        "stated_at": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "doc",
+            "page"
+          ],
+          "properties": {
+            "doc": {
+              "type": "string",
+              "enum": [
+                "main",
+                "si"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            }
+          },
+          "description": "Where the paper states this when the block itself (its scheme, table, caption, footnotes) does not print it: document and page of the passage. Null when the block prints it, and for an inferred item"
+        },
+        "inferred": {
+          "type": "boolean",
+          "description": "False for a change the paper states. True when it is your own conclusion (by analogy with another protocol, from chemical knowledge); `basis` then gives the reasoning"
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "text",
+        "page",
+        "bbox"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Printed label of the drawn compound (C1, L3) or a short slug"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Printed name, if any"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "bbox": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "[x0, y0, x1, y1] in PDF points"
+        }
+      }
+    }
+  }
+}

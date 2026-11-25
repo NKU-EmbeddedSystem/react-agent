@@ -1,0 +1,128 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reactions",
+    "notes",
+    "issues"
+  ],
+  "properties": {
+    "reactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "results",
+          "variant",
+          "footnote_markers",
+          "distinguishing",
+          "cells"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "description": "Number of the entry in `entries` (1 = first) the reaction is printed in"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "column",
+                "part"
+              ],
+              "properties": {
+                "column": {
+                  "type": "string",
+                  "description": "Key of an outcome field"
+                },
+                "part": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "null when the whole cell belongs to this reaction; else the part of the cell text that does, copied exactly"
+                }
+              }
+            },
+            "description": "The result cells of this reaction"
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Key of the template variant this reaction runs: the one whose label is printed with its results or heads its group of entries, or the one a rule printed in the figure assigns to it (say so in notes); null without a label or rule"
+          },
+          "footnote_markers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Markers printed in the entry (on the compound number or on its results) that apply to this reaction; never those of the title or of the general reaction"
+          },
+          "distinguishing": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Every reaction of an entry that reports more than one: what sets it apart, as printed ('[B]', '60 °C', 'on a larger scale', 'Cl'); null for an entry that reports one reaction"
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "column",
+                "part"
+              ],
+              "properties": {
+                "column": {
+                  "type": "string",
+                  "description": "Key of a participant or variable field"
+                },
+                "part": {
+                  "type": "string",
+                  "description": "The part of that cell's text that is this reaction's own, copied exactly"
+                }
+              }
+            },
+            "description": "Only when the entry reports several reactions that differ in a variable value (or a compound) printed together in one field ('Br / Cl'): this reaction's part of that cell. Empty otherwise"
+          }
+        }
+      },
+      "description": "Every reaction of the figure in entry order: one per entry, unless an entry reports several experiments"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entry",
+          "text"
+        ],
+        "properties": {
+          "entry": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Why an entry was split, how a variant was assigned to an entry that prints no label, or what is unusual about it; nothing for plain entries"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Doubts a reviewer should look at"
+    }
+  }
+}

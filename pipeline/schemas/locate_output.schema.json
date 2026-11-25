@@ -1,0 +1,416 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "paper",
+    "si_sections",
+    "schemes",
+    "regions",
+    "caption_check"
+  ],
+  "properties": {
+    "paper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reaction_class",
+        "numbering_convention",
+        "notes"
+      ],
+      "properties": {
+        "reaction_class": {
+          "type": "string"
+        },
+        "numbering_convention": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "si_sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "section_id",
+          "title",
+          "first_page",
+          "last_page",
+          "kind",
+          "notes"
+        ],
+        "properties": {
+          "section_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "first_page": {
+            "type": "integer"
+          },
+          "last_page": {
+            "type": "integer"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "general_info",
+              "optimization",
+              "general_procedure",
+              "reaction_procedures",
+              "substrate_prep",
+              "catalyst_prep",
+              "application",
+              "mechanistic",
+              "characterization",
+              "crystallography",
+              "spectra",
+              "computation",
+              "references",
+              "other"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "schemes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scheme_id",
+          "doc",
+          "page",
+          "bbox",
+          "description"
+        ],
+        "properties": {
+          "scheme_id": {
+            "type": "string"
+          },
+          "doc": {
+            "type": "string",
+            "enum": [
+              "main",
+              "si"
+            ]
+          },
+          "page": {
+            "type": "integer"
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Box around the whole drawn general reaction, all steps included"
+          },
+          "description": {
+            "type": "string",
+            "description": "The general reaction in one sentence"
+          }
+        }
+      },
+      "description": "General schemes: the drawn general or model reaction that the entries of a block follow"
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "region_id",
+          "doc",
+          "first_page",
+          "last_page",
+          "boxes",
+          "label",
+          "caption",
+          "kind",
+          "include",
+          "exclude_reason",
+          "presentation",
+          "footnotes",
+          "blocks",
+          "related",
+          "notes"
+        ],
+        "properties": {
+          "region_id": {
+            "type": "string"
+          },
+          "doc": {
+            "type": "string",
+            "enum": [
+              "main",
+              "si"
+            ]
+          },
+          "first_page": {
+            "type": "integer",
+            "description": "PDF page index in the region's own doc"
+          },
+          "last_page": {
+            "type": "integer",
+            "description": "PDF page index in the region's own doc"
+          },
+          "boxes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "page",
+                "bbox"
+              ],
+              "properties": {
+                "page": {
+                  "type": "integer",
+                  "description": "PDF page index in the region's own doc"
+                },
+                "bbox": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Numbered caption label only, e.g. 'Scheme 2' or 'Table S1'; null if the region has no numbered caption"
+          },
+          "caption": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "$ref": "#/$defs/kind"
+          },
+          "include": {
+            "type": "boolean"
+          },
+          "exclude_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "presentation": {
+            "type": "string",
+            "enum": [
+              "vector_graphic",
+              "raster_image",
+              "text_table",
+              "prose",
+              "scanned"
+            ]
+          },
+          "footnotes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "block_id",
+                "page",
+                "bbox",
+                "title",
+                "kind",
+                "layout",
+                "scheme_id",
+                "general_reaction",
+                "conditions_text",
+                "n_entries_est",
+                "labels_seen",
+                "entries_first_page",
+                "entries_last_page",
+                "include",
+                "notes"
+              ],
+              "properties": {
+                "block_id": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer",
+                  "description": "PDF page index in the region's own doc; SI links go in the region's related list"
+                },
+                "bbox": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "kind": {
+                  "$ref": "#/$defs/kind"
+                },
+                "layout": {
+                  "type": "string",
+                  "enum": [
+                    "condition_table",
+                    "product_scope",
+                    "reactant_table",
+                    "equation",
+                    "prose",
+                    "other"
+                  ],
+                  "description": "What one entry of the block prints (references/taxonomy.md): condition_table = one fixed model reaction, entries change only conditions (text rows or drawn catalysts/ligands); product_scope = entries draw the products of a general scheme; reactant_table = table rows give the reactants of a general scheme (drawn, named, numbered or as R/X values) and the product follows from it; equation = every entry draws its whole reaction; prose = entries are paragraphs; other = none of these"
+                },
+                "scheme_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The general scheme this block's entries follow; null if every reaction of the block is drawn or described in full"
+                },
+                "general_reaction": {
+                  "type": "string"
+                },
+                "conditions_text": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "n_entries_est": {
+                  "type": "integer"
+                },
+                "labels_seen": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "entries_first_page": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Same doc as the region; null unless entries are on other pages of that doc"
+                },
+                "entries_last_page": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Same doc as the region; null unless entries are on other pages of that doc"
+                },
+                "include": {
+                  "type": "boolean"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "related": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "target_id",
+                "relation"
+              ],
+              "properties": {
+                "target_id": {
+                  "type": "string"
+                },
+                "relation": {
+                  "type": "string",
+                  "enum": [
+                    "subset_of",
+                    "superset_of",
+                    "same_as",
+                    "overlaps",
+                    "details_in",
+                    "procedure_in",
+                    "characterization_in"
+                  ]
+                }
+              }
+            },
+            "description": "The only place for links to other regions or SI sections, including main-to-SI links"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "caption_check": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "region_id",
+          "reason"
+        ],
+        "properties": {
+          "candidate_id": {
+            "type": "string"
+          },
+          "region_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "optimization",
+        "substrate_scope",
+        "mechanistic",
+        "application",
+        "substrate_prep",
+        "catalyst_prep",
+        "background",
+        "mechanism_proposal",
+        "characterization",
+        "other"
+      ]
+    }
+  }
+}
